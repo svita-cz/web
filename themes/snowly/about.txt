@@ -1,0 +1,5 @@
+Theme name:    Snowly
+Description:   Very minimalistic theme focused entirely on a content.
+Author name:   Piotr Filipek
+Author site:   http://danoxide.pl
+License:       WTFPL (http://sam.zoy.org/wtfpl/COPYING)
