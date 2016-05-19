@@ -244,6 +244,45 @@ Route::post('search', function() {
 });
 
 /**
+BOOKZ
+*/
+Route::get('bookz/(:num)', function($id) use($posts_page){
+	$Q = new Query('bookz_record');
+	$Q->where('id', '=', $id);
+	if (!user_authed()) {
+		$Q->where('is_published', '=', 1);
+	}
+
+	if( ! $record = $Q->fetch() ) {
+		return Response::create(new Template('404'), 404);
+	}
+	
+	if (!empty($record->id_parent)) {
+		$QP = new Query('bookz_record');
+		$QP->where('id', '=', $record->id_parent);
+		if (!user_authed()) {
+			$QP->where('is_published', '=', 1);
+		}
+		$record->parent = $QP->fetch();
+	}
+	
+	$QCh = new Query('bookz_record');
+	$QCh->where('id_parent', '=', $record->id);
+	if (!user_authed()) {
+		$QCh->where('is_published', '=', 1);
+	}
+	$QCh->sort('ordkey', 'ASC');
+	$QCh->sort('title', 'ASC');
+	$record->child = $QCh->get();
+
+	$posts_page->title = $record->title;
+	Registry::set('page', $posts_page);
+	Registry::set('record', $record);
+
+	return new Template('bookz_record');
+});
+
+/**
  * View pages
  */
 Route::get('(:all)', function($uri) {
@@ -259,3 +298,5 @@ Route::get('(:all)', function($uri) {
 
 	return new Template('page');
 });
+
+
